@@ -1,0 +1,72 @@
+body{
+   
+    justify-content: center;
+}
+.charge-rate-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    justify-content: center;
+    margin-bottom: 70px;
+}
+
+.charge-rate-form label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    justify-content: center;
+}
+
+.charge-rate-form input,
+.charge-rate-form select {
+    width: 96%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+    justify-content: center !important;
+     
+}
+
+.charge-rate-form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    justify-content: center;
+   max-width: 500px !important;
+    
+}
+
+.charge-rate-form button:hover {
+    background-color: #0056b3;
+}
+
+.submitted-data {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    justify-content: center;
+}
+ .submit-button{
+    
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    justify-content: center;
+    max-width: 500px !important;
+ }
