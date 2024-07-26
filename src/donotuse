@@ -1,0 +1,378 @@
+/*import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./charge.css";
+
+
+//initialState.js
+
+const initialState = {
+  data: [],
+  status: "",
+  type: "",
+  limit: "",
+  offset: "",
+  station: "",
+  submittedData: null,
+};
+
+
+//reducer.js
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "SET_DATA":
+      return { ...state, data: action.data };
+    case "SET_STATUS":
+      return { ...state, status: action.status };
+    case "SET_TYPE":
+      return { ...state, type: action.type };
+    case "SET_LIMIT":
+      return { ...state, limit: action.limit };
+    case "SET_OFFSET":
+      return { ...state, offset: action.offset };
+    case "SET_STATION":
+      return { ...state, station: action.station };
+    case "SET_SUBMITTED_DATA":
+      return { ...state, submittedData: action.submittedData };
+    default:
+      return state;
+  }
+};
+
+//form.js
+
+const ChargeForm = () => {
+  const [state, dispatch] = useState(initialState);
+  const account_id = "";
+  const token = "";
+
+  const handleSubmitdata = async (event) => {
+    event.preventDefault();
+    try {
+      axios
+        .post(
+          "",
+          {
+            status: state.status,
+            type: state.type,
+            limit: state.limit,
+            offset: state.offset,
+            station: state.station,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+              Accountid: account_id,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("POST Success:", response.data);
+          dispatch({ type: "SET_SUBMITTED_DATA", submittedData: response.data.data });
+        });
+    } catch (error) {
+      console.error("POST Error:", error);
+    }
+  };
+
+  const handleGetRate = async () => {
+    try {
+      const response = await axios
+        .get(
+          "",
+         
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accountid: account_id,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          console.log("GET Success:", response.data);
+          dispatch({ type: "SET_DATA", data: response.data.data });
+        });
+    } catch (error) {
+      console.error("GET Error:", error);
+    }
+  };
+
+  return (
+    <div className="charge-rate-form">
+      <form onSubmit={handleSubmitdata}>
+        <div>
+          <label htmlFor="status">status:</label>
+          <input
+            type="number"
+            id="status"
+            value={state.status}
+            onChange={(e) => dispatch({ type: "SET_STATUS", status: e.target.value })}
+          />
+        </div>
+        <div>
+          <label htmlFor="type">type:</label>
+          <input
+            type="number"
+            id="type"
+            value={state.type}
+            onChange={(e) => dispatch({ type: "SET_TYPE", type: e.target.value })}
+          />
+        </div>
+        <div>
+          <label htmlFor="limit">limit:</label>
+          <input
+            type="number"
+            id="limit"
+            value={state.limit}
+            onChange={(e) => dispatch({ type: "SET_LIMIT", limit: e.target.value })}
+          />
+        </div>
+        <div>
+          <label htmlFor="offset">offset:</label>
+          <input
+            type="number"
+            id="offset"
+            value={state.offset}
+            onChange={(e) => dispatch({ type: "SET_OFFSET", offset: e.target.value })}
+          />
+        </div>
+        <div>
+          <label htmlFor="station">station:</label>
+          <input
+            id="station"
+            value={state.station}
+            onChange={(e) => dispatch({ type: "SET_STATION", station: e.target.value })}
+          />
+        </div>
+        <div className="submit-button">
+          <button type="submit">Submit</button>
+        </div>
+
+        {console.log("subitted data-->", state.submittedData)}
+        {state.submittedData && (
+          <div className="submitted-data">
+            <h2>Submitted Data:</h2>
+            <p>status: {state.submittedData[0].status}</p>
+            <p>type: {state.submittedData[0].type}</p>
+            <p>limit: {state.submittedData[0].limit}</p>
+            <p>offset: {state.submittedData[0].offset}</p>
+            <p>station: {state.submittedData[0].station}</p>
+          </div>
+        )}
+        
+        {console.log("data--->", state.data)}
+
+        {state.data && (
+          <div className="display-data">
+            <h2>User information</h2>
+            {state.data.map((item) => (
+              <table key={item.id}>
+                <tbody>
+                  <tr>
+                    <td>status: {item.status}</td>
+                    <td>type: {item.type}</td>
+                    <td>charging_station_id: {item.charging_station_id}</td>
+                    <td>card_id: {item.card_id}</td>
+                    <td>reservation_id: {item.reservation_id}</td>
+                    <td>discount_amount: {item.discount_amount}</td>
+                    <td>discount_percent: {item.discount_percent}</td>
+                    <td>account_id: {item.account_id}</td>
+                  </tr>
+                </tbody>
+              </table>
+            ))}
+          </div>
+        )}
+      </form>
+      <button type="button" onClick={handleGetRate}>
+        Get data
+      </button>
+
+    </div>);
+};
+
+export default ChargeForm;
+
+
+
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./UserForm.css";
+
+const initialState = {
+  data: [],
+  quantity: '',
+  unit: '',
+  category: 0,
+  submittedData: null,
+};
+
+const ChargeRateForm = () => {
+  const [state, dispatch] = React.useReducer((state, action) => {
+    switch (action.type) {
+      case 'SET_DATA':
+        return { ...state, data: action.data };
+      case 'SET_QUANTITY':
+        return { ...state, quantity: action.quantity };
+      case 'SET_UNIT':
+        return { ...state, unit: action.unit };
+      case 'SET_CATEGORY':
+        return { ...state, category: action.category };
+      case 'SUBMITTED_DATA':
+        return { ...state, submittedData: action.submittedData };
+      default:
+        return state;
+    }
+  }, initialState);
+
+  const account_id = "";
+  const token =
+    "";
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      axios
+        .post(
+          "",
+          [
+            {
+              quantity: state.quantity,
+              unit: state.unit,
+              category: state.category,
+            },
+          ],
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+              Accountid: account_id,
+            },
+          }
+        )
+        .then((response) => {
+          dispatch({ type: 'SUBMITTED_DATA', submittedData: response.data.data });
+        });
+    } catch (error) {
+      console.error("POST Error:", error);
+    }
+  };
+
+  const handleGetRate = async () => {
+    try {
+      const response = await axios
+        .get("", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accountid: account_id,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          dispatch({ type: 'SET_DATA', data: response.data.data });
+        });
+    } catch (error) {
+      console.error("GET Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    handleGetRate();
+  }, []);
+
+  return (
+    <div className="charge-rate-form">
+      <div className="charge-rate">
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="quantity">Quantity:</label>
+            <input
+              type="text"
+              id="quantity"
+              value={state.quantity}
+              onChange={(e) => dispatch({ type: 'SET_QUANTITY', quantity: e.target.value })}
+            />
+          </div>
+          <div>
+            <label htmlFor="unit">Unit:</label>
+            <input
+              type="number"
+              id="unit"
+              value={state.unit}
+              onChange={(e) => dispatch({ type: 'SET_UNIT', unit: parseInt(e.target.value) })}
+            />
+          </div>
+          <div>
+            <label htmlFor="category">Category:</label>
+            <select
+              id="category"
+              value={state.category}
+              onChange={(e) => dispatch({ type: 'SET_CATEGORY', category: parseInt(e.target.value) })}
+            >
+              <option value={0}>Category 0</option>
+              <option value={1}>Category 1</option>
+              <option value={2}>Category 2</option>
+            </select>
+          </div>
+          <div className="submit-button">
+            <button type="submit">Submit</button>
+          </div>
+        </form>
+        <button type="submit" onClick={handleGetRate}>
+          Get data
+        </button>
+      </div>
+
+      {console.log("subitted data-->", state.submittedData)}
+      {state.submittedData && (
+        <div className="submitted-data">
+          <h2>Submitted Data:</h2>
+          <p>Quantity: {state.submittedData[0].quantity}</p>
+          <p>Unit: {state.submittedData[0].unit}</p>
+          <p>Category: {state.submittedData[0].category}</p>
+                    <td>{state.submittedData[0].unit}</td>      
+                    <td>{state.submittedData[0].quantity}</td>     
+                    <td>{state.submittedData[0].category}</td>     
+                    <td>{state.submittedData[0].account_id}</td>     
+                    <td>{state.submittedData[0].created_by}</td>
+                    <td>{state.submittedData[0].created_on}</td>
+                    <td>{state.submittedData[0].updated_on}</td>
+                    <td>{state.submittedData[0].account_id}</td>
+        </div>
+      )}
+      {console.log("data--->", state.data)}
+      <div className="display-chargedata">
+        
+      {state.data&& Array.isArray(state.data)&&(
+        <div className="display-data">
+          <h2>User information</h2>
+      
+          {state.data.map((item) => {
+            return (
+              <>
+                <table>
+                  <tr>
+                    <td>{item.unit}</td>      
+                    <td>{item.quantity}</td>     
+                    <td>{item.category}</td>     
+                    <td>{item.account_id}</td>     
+                    <td>{item.created_by}</td>
+                    <td>{item.created_on}</td>
+                    <td>{item.updated_on}</td>
+                    <td>{item.account_id}</td>
+                  </tr>
+                </table>
+              </>
+            );
+          })}
+        </div>
+      )}
+      </div>
+
+    </div>
+  )}
+export default ChargeRateForm;
+*/

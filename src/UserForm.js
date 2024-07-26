@@ -1,69 +1,84 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./UserForm.css";
+
 const ChargeRateForm = () => {
-  const [quantity, setQuantity] = useState("");
-  const [unit, setUnit] = useState(0);
-  const [category, setCategory] = useState(2);
-  const [submittedData, setSubmittedData] = useState(null);
+
+  const [quantity, setQuantity] = useState();
+  const [unit, setUnit] = useState();
+  const [category, setCategory] = useState(0); 
+
+  const [submittedData, setSubmittedData] = useState(null); // post/submit data
+  const [data, setData] = useState();  // get/display data
+
   const account_id = "100408";
-  const token = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwYWNYR0t1X1JkcHpoN0pRaGFOY3AzNmNQYktYbTI5X2FBZV9WSkhrczdrIn0.eyJleHAiOjE3MjEyOTk4MDMsImlhdCI6MTcyMTI5NjIwMywianRpIjoiYTY5YWQ0YjQtNzA0My00OTlhLWJjY2QtZTViZTU3ZmFlZjBjIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmRldmVsb3Auc3ZjLmNsdXN0ZXIubG9jYWwvcmVhbG1zL1NDSE9OIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjMyOWJhNjE5LTczMzMtNGRhOC04YmIwLTQ5Yjg2YjhiZWQ4NyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluX3dlYl9jaGFyZ2luZ19saXRlIiwic2Vzc2lvbl9zdGF0ZSI6ImFkZDdkYWM1LWE1NzYtNDhmMS04ZjQ3LTI0OGJjYjU2NjhmYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiQ09ORklHX0FDQ0VTUyIsIk5PVElGSUNBVElPTiIsIk9QRVJBVE9SIiwiU1lTVEVNX1BVU0hfTk9USUZZIiwiU1lTVEVNX1VTQUdFX0FVRElUIiwiZGVmYXVsdC1yb2xlcy1TQ0hPTiIsIlNZU1RFTV9QQVlNRU5UIiwiR1VFU1QiLCJTWVNURU1fRU1BSUxfTk9USUZZIiwiU1lTVEVNX0FVRElUIiwiU1lTVEVNX1NNU19OT1RJRlkiXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwidmlldy1yZWFsbSIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImFkZDdkYWM1LWE1NzYtNDhmMS04ZjQ3LTI0OGJjYjU2NjhmYiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IkVsc2EgU3RhbmV5IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZWxzYS5zdGFuZXlAYWNzaWF0ZWNoLmNvbSIsImdpdmVuX25hbWUiOiJFbHNhIiwiZmFtaWx5X25hbWUiOiJTdGFuZXkiLCJlbWFpbCI6ImVsc2Euc3RhbmV5QGFjc2lhdGVjaC5jb20ifQ.a6DIExyfPIocq7skevNVXt50w9wkfaE3O-wqoDrMicN3YQ0BeFf5QJ_EQuPAuV7XArSUrQcCrlmaC5rmwFFiMfWCCrmGqoOIgePZjhT5bCGEaqzg61ag-o29g4KmYeRMY3kazvHK-lnUzC853aQkOZZT4_u8iBRBREInVvGikZoj3f9-XCYs8tT01QPz7PzILnD5_rI_24geyap_PGD61eyDFzCC4Ppp5A2e6sJXE4bYJExr2g3X3D5rntLH7iaHj9vgoTrVF8ljh6FT9xmmTBHxJS9iZZU4F0jDNuK9kXusCcihLnrcsmLq9QMLN3gbbuP73SfgtAQuB4qrb1akHQ";
-  const handleSubmit = async (event) => {
+  const token =
+    "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTeTBRVU1jSGpsOFhsbVlDV09PLWpQbG9FOGhMRm1tZUE2Ykt2dlU1WWZBIn0.eyJleHAiOjE3MjE3MzQyMzcsImlhdCI6MTcyMTczMDYzNywianRpIjoiODZiZjc2ODUtZjFjNi00ODMzLTk3MzktZjBkMGIxYTQ0Mzc1IiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmRldmVsb3Auc3ZjLmNsdXN0ZXIubG9jYWwvcmVhbG1zL0NBU0lPIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6Ijk0NjJkMDJiLTBjOTgtNDE1OS05MTQ2LTI0Yjc0NzY2NGE3ZSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluX3dlYl9jaGFyZ2luZ19saXRlIiwic2Vzc2lvbl9zdGF0ZSI6ImZmYmQxMWM1LWM5ZTYtNGQzZi05ZDMxLTRiZTYzNTU0ZWMwOSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiQ09ORklHX0FDQ0VTUyIsIlNVUEVSX0FETUlOIiwiQUNDT1VOVF9BRE1JTiIsIlNZU1RFTV9QQVlNRU5UIiwiR1VFU1QiLCJTWVNURU1fRU1BSUxfTk9USUZZIiwiU1lTVEVNX0FVRElUIiwiTk9USUZJQ0FUSU9OIiwiZGVmYXVsdC1yb2xlcy1DQVNJTyIsIlNZU1RFTV9VU0FHRV9BVURJVCIsIlNZU1RFTV9QVVNIX05PVElGWSIsIkNPTlRFTlRfTUFOQUdFUiIsIkJVU0lORVNTX0FETUlOIiwiQ09OVEVOVF9DVVJBVE9SIiwiUExBVEZPUk1fQURNSU4iLCJTWVNURU1fU01TX05PVElGWSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7InJlYWxtLW1hbmFnZW1lbnQiOnsicm9sZXMiOlsidmlldy1yZWFsbSIsInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwibWFuYWdlLWlkZW50aXR5LXByb3ZpZGVycyIsImltcGVyc29uYXRpb24iLCJyZWFsbS1hZG1pbiIsImNyZWF0ZS1jbGllbnQiLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJ2aWV3LWF1dGhvcml6YXRpb24iLCJxdWVyeS1jbGllbnRzIiwicXVlcnktdXNlcnMiLCJtYW5hZ2UtZXZlbnRzIiwibWFuYWdlLXJlYWxtIiwidmlldy1ldmVudHMiLCJ2aWV3LXVzZXJzIiwidmlldy1jbGllbnRzIiwibWFuYWdlLWF1dGhvcml6YXRpb24iLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWdyb3VwcyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiZmZiZDExYzUtYzllNi00ZDNmLTlkMzEtNGJlNjM1NTRlYzA5IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiS3Jpc2huYSBLYWxlc2ggQmFsYWtyaXNobmFuIiwicHJlZmVycmVkX3VzZXJuYW1lIjoia3Jpc2huYS5iYWxha3Jpc2huYW5AYWNzaWF0ZWNoLmNvbSIsImdpdmVuX25hbWUiOiJLcmlzaG5hIEthbGVzaCIsImZhbWlseV9uYW1lIjoiQmFsYWtyaXNobmFuIiwiZW1haWwiOiJrcmlzaG5hLmJhbGFrcmlzaG5hbkBhY3NpYXRlY2guY29tIn0.GlBpCZmQo0DlSyANuHxy4XNfXPM363VRgrE_3bpf0ljn1pczjodfgUpkZaN75aCElxYxZVxcGXiWttRsZTainnflU_Pk7DRrncZPl7boQvxrZA4bGef4d5wmlzbgmkcDE5dGvYeAlKzib9fanYHf2tlzdsmoUizBrr5W02ujF5Kqfy3qADY1jVmslKD7syBcYJaONSOF3r7AaW51yGssXguWZ9M4rL20Bs7OTi50nnQRdThdk8jgXp0hcCvwvIK2nSjl6wwmSBagg6ST2kUUAjP2WfPSN83thzdE1BBwifHyH1IZHmQ_xnnjFhbTX4BHmEPX96pVemdLWshFMGPanQ";
+    
+    // update token
+
+    const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       axios
         .post(
           "https://onprem.digital.acsiatech.com/csmsadmin/v1/charge/rate",
+          [                                                                 
+            {                                             //assign input values
+              quantity: quantity,
+              unit: unit,
+              category: category,
+            },
+          ],
           {
-            quantity: quantity,
-            unit: unit,
-            category: category,
-          },
-          {
-            headers: {
+            headers: {                                     //pass credentials to header
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
               Accountid: account_id,
             },
           }
         )
-        .then((result) => {
-          alert("Success");
+        .then((response) => {
+          console.log("POST Success:", response.data);         //display status on console
+          setSubmittedData(response.data.data);                //pass post values to data
         });
-      console.log('POST Success:', response.data);
-
-      setSubmittedData(response.data);
+        
     } catch (error) {
-      console.error("POST Error:", error);
+      console.error("POST Error:", error);                      //display error
     }
   };
 
-  const handleGetRate = () => {
-    const response = axios.get(
-      "https://onprem.digital.acsiatech.com/csmsadmin/v1/charge/rate",
-      {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIwYWNYR0t1X1JkcHpoN0pRaGFOY3AzNmNQYktYbTI5X2FBZV9WSkhrczdrIn0.eyJleHAiOjE3MjEyOTk4MDMsImlhdCI6MTcyMTI5NjIwMywianRpIjoiYTY5YWQ0YjQtNzA0My00OTlhLWJjY2QtZTViZTU3ZmFlZjBjIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmRldmVsb3Auc3ZjLmNsdXN0ZXIubG9jYWwvcmVhbG1zL1NDSE9OIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6IjMyOWJhNjE5LTczMzMtNGRhOC04YmIwLTQ5Yjg2YjhiZWQ4NyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFkbWluX3dlYl9jaGFyZ2luZ19saXRlIiwic2Vzc2lvbl9zdGF0ZSI6ImFkZDdkYWM1LWE1NzYtNDhmMS04ZjQ3LTI0OGJjYjU2NjhmYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiQ09ORklHX0FDQ0VTUyIsIk5PVElGSUNBVElPTiIsIk9QRVJBVE9SIiwiU1lTVEVNX1BVU0hfTk9USUZZIiwiU1lTVEVNX1VTQUdFX0FVRElUIiwiZGVmYXVsdC1yb2xlcy1TQ0hPTiIsIlNZU1RFTV9QQVlNRU5UIiwiR1VFU1QiLCJTWVNURU1fRU1BSUxfTk9USUZZIiwiU1lTVEVNX0FVRElUIiwiU1lTVEVNX1NNU19OT1RJRlkiXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbInZpZXctaWRlbnRpdHktcHJvdmlkZXJzIiwidmlldy1yZWFsbSIsIm1hbmFnZS1pZGVudGl0eS1wcm92aWRlcnMiLCJpbXBlcnNvbmF0aW9uIiwicmVhbG0tYWRtaW4iLCJjcmVhdGUtY2xpZW50IiwibWFuYWdlLXVzZXJzIiwicXVlcnktcmVhbG1zIiwidmlldy1hdXRob3JpemF0aW9uIiwicXVlcnktY2xpZW50cyIsInF1ZXJ5LXVzZXJzIiwibWFuYWdlLWV2ZW50cyIsIm1hbmFnZS1yZWFsbSIsInZpZXctZXZlbnRzIiwidmlldy11c2VycyIsInZpZXctY2xpZW50cyIsIm1hbmFnZS1hdXRob3JpemF0aW9uIiwibWFuYWdlLWNsaWVudHMiLCJxdWVyeS1ncm91cHMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsInNpZCI6ImFkZDdkYWM1LWE1NzYtNDhmMS04ZjQ3LTI0OGJjYjU2NjhmYiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IkVsc2EgU3RhbmV5IiwicHJlZmVycmVkX3VzZXJuYW1lIjoiZWxzYS5zdGFuZXlAYWNzaWF0ZWNoLmNvbSIsImdpdmVuX25hbWUiOiJFbHNhIiwiZmFtaWx5X25hbWUiOiJTdGFuZXkiLCJlbWFpbCI6ImVsc2Euc3RhbmV5QGFjc2lhdGVjaC5jb20ifQ.a6DIExyfPIocq7skevNVXt50w9wkfaE3O-wqoDrMicN3YQ0BeFf5QJ_EQuPAuV7XArSUrQcCrlmaC5rmwFFiMfWCCrmGqoOIgePZjhT5bCGEaqzg61ag-o29g4KmYeRMY3kazvHK-lnUzC853aQkOZZT4_u8iBRBREInVvGikZoj3f9-XCYs8tT01QPz7PzILnD5_rI_24geyap_PGD61eyDFzCC4Ppp5A2e6sJXE4bYJExr2g3X3D5rntLH7iaHj9vgoTrVF8ljh6FT9xmmTBHxJS9iZZU4F0jDNuK9kXusCcihLnrcsmLq9QMLN3gbbuP73SfgtAQuB4qrb1akHQ`,
-          Accountid: 100408,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log("GET Success:", response.data);
-
-    setSubmittedData(response.data);
+  const handleGetRate = async () => {
+    try {
+      const response = await axios
+        .get("https://onprem.digital.acsiatech.com/csmsadmin/v1/charge/rate", {
+          headers: {                                           //pass credentials to header
+            Authorization: `Bearer ${token}`,
+            Accountid: account_id,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log("GET Success:", response.data);            //display status on console
+          setData(response.data.data);                           //pass get values to data
+        });
+    } catch (error) {
+      console.error("GET Error:", error);                        //display error
+    }
   };
+  
   return (
     <div className="charge-rate-form">
-      <form onSubmit={handleSubmit}>
+      <div className="charge-rate">
+      <form onSubmit={handleSubmit}>                            {/* form submit handle */}
         <div>
           <label htmlFor="quantity">Quantity:</label>
           <input
             type="text"
             id="quantity"
             value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            required
+            onChange={(e) => setQuantity(e.target.value)}  
           />
         </div>
         <div>
@@ -82,9 +97,9 @@ const ChargeRateForm = () => {
             value={category}
             onChange={(e) => setCategory(parseInt(e.target.value))}
           >
-            <option value={0}>Category 0</option>
-            <option value={1}>Category 1</option>
-            <option value={2}>Category 2</option>
+            <option value={0}>Category 0 </option>
+            <option value={1}>Category 1 </option>
+            <option value={2}>Category 2 </option>
           </select>
         </div>
         <div className="submit-button">
@@ -94,15 +109,54 @@ const ChargeRateForm = () => {
       <button type="submit" onClick={handleGetRate}>
         Get data
       </button>
-      {submittedData && (
+      </div>
+      {console.log("subitted data-->", submittedData)}
+      {submittedData && (                                        //display submitted data
         <div className="submitted-data">
           <h2>Submitted Data:</h2>
-          <p>Quantity: {submittedData.quantity}</p>
-          <p>Unit: {submittedData.unit}</p>
-          <p>Category: {submittedData.category}</p>
+          <p>Quantity: {submittedData[0].quantity}</p>
+          <p>Unit: {submittedData[0].unit}</p>
+          <p>Category: {submittedData[0].category}</p>
+                    <td>{submittedData[0].unit}</td>      
+                    <td>{submittedData[0].quantity}</td>     
+                    <td>{submittedData[0].category}</td>     
+                    <td>{submittedData[0].account_id}</td>     
+                    <td>{submittedData[0].created_by}</td>
+                    <td>{submittedData[0].created_on}</td>
+                    <td>{submittedData[0].updated_on}</td>
+                    <td>{submittedData[0].account_id}</td>
         </div>
       )}
+      {console.log("data--->", data)}
+      <div className="display-chargedata">
+        
+      {data&& Array.isArray(data)&&(                        //display all data
+        <div className="display-data">
+          <h2>User information</h2>
+      
+          {data.map((item) => {                             //maping data to item
+            return (
+              <>
+                <table>
+                  <tr>
+                    <td>{item.unit}</td>      
+                    <td>{item.quantity}</td>     
+                    <td>{item.category}</td>     
+                    <td>{item.account_id}</td>     
+                    <td>{item.created_by}</td>
+                    <td>{item.created_on}</td>
+                    <td>{item.updated_on}</td>
+                    <td>{item.account_id}</td>
+                    </tr>
+                </table>
+              </>
+            );
+          })}
+        </div>
+      )}
+      </div>
     </div>
+    
   );
 };
-export default ChargeRateForm;
+export default ChargeRateForm;                               //exporting the form

@@ -1,0 +1,102 @@
+.charge-rate-form {
+    max-width: 100%;
+    margin: auto;
+    padding: 30px;
+    border: 1px solid #f1f1f1;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #eaf1f1;
+  }
+  
+  .charge-rate {
+    
+    max-width: 300px;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: inherit;
+    background-color: white;
+    
+  }
+    
+  .charge-rate-form div {
+    margin-bottom: 20px;
+  }
+  
+  .charge-rate-form label {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .charge-rate form input,
+  .charge-rate form select {
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    height: 30px;
+    display: block;
+  }
+  
+  .charge-rate-form button[type="submit"] {
+    width: 100%;
+    height: 40px;
+    background-color: #af4ca2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .charge-rate-form button[type="submit"]:hover {
+    background-color: #1f2ca0;
+  } 
+  
+  .submitted-data {
+    margin-top: 20px;
+  }
+  
+  .submitted-data h2 {
+    font-weight: bold;
+  }
+  
+  .submitted-data p {
+    margin-bottom: 10px;
+  }
+  
+  .display-data {
+    margin-top: 20px;
+  }
+  
+  .display-data table {
+    border-collapse: collapse;
+   
+  }
+  
+  .display-data tr th,
+  .display-data tr td {
+    border: 1px solid #ddd;
+  }
+  
+  table{
+    border-color: rgb(116, 116, 116);
+  }
+ 
+  
+  .display-data tr:nth-child(even) {
+  background-color: #f2f2f2;}
+  
+  .display-data tr:nth-child(odd) {
+  background-color:#ffffff;}
+  
+  th {
+  font-weight:bold;
+  padding: 20px;
+  background-color: rgb(233, 233, 233);
+  }
+  
+  td{
+  padding-left:15px; padding-right:15px; text-align:center; }
+  
+  td:nth-child(1){text-align:left;}
+  
+  
